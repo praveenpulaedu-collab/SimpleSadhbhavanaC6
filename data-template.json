@@ -1,0 +1,56 @@
+[
+  {
+    "id": "light-1",
+    "location": "Street Light 1",
+    "issue": "Street light not working",
+    "status": "pending",
+    "priority": "high",
+    "lastUpdated": "2026-01-20",
+    "type": "streetlight"
+  },
+  {
+    "id": "water-1",
+    "location": "North Water Line",
+    "issue": "Water leakage detected",
+    "status": "in-progress",
+    "priority": "high",
+    "lastUpdated": "2026-01-22",
+    "type": "water"
+  },
+  {
+    "id": "plot-A1",
+    "location": "Plot A1",
+    "issue": "Garbage collection missed",
+    "status": "resolved",
+    "priority": "medium",
+    "lastUpdated": "2026-01-25",
+    "type": "garbage"
+  },
+  {
+    "id": "road-1",
+    "location": "Main Road",
+    "issue": "Pothole needs repair",
+    "status": "pending",
+    "priority": "medium",
+    "lastUpdated": "2026-01-21",
+    "type": "road"
+  },
+  {
+    "id": "drain-2",
+    "location": "Drain Point 2",
+    "issue": "Drainage blocked",
+    "status": "in-progress",
+    "priority": "high",
+    "lastUpdated": "2026-01-24",
+    "type": "drainage"
+  },
+  {
+    "id": "park-1",
+    "location": "Central Park",
+    "issue": "Maintenance required",
+    "status": "pending",
+    "priority": "low",
+    "lastUpdated": "2026-01-19",
+    "type": "park"
+  }
+]

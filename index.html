@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Township Management System</title>
+    <meta name="description" content="Manage township payments, issues, and notifications">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>🏘️ Township Management</h1>
+                    <p>Welcome back! Please login to continue</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" class="input-field" placeholder="Enter username" required
+                            autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="input-field" placeholder="Enter password" required
+                            autocomplete="current-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole">Login As</label>
+                        <select id="userRole" class="select-field" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="resident">Resident</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Login</button>
+                </form>
+                <div class="login-footer">
+                    <p class="demo-credentials">
+                        <strong>Demo Credentials:</strong><br>
+                        Admin: admin / admin123<br>
+                        Resident: resident1 / pass123
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="page">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <h1 class="navbar-title">🏘️ Township Management - Admin</h1>
+                <div class="navbar-actions">
+                    <span class="user-info" id="adminUserInfo">Admin</span>
+                    <button id="adminLogout" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="dashboard-container">
+            <aside class="sidebar-nav">
+                <button class="nav-item active" data-section="overview">
+                    <span class="nav-icon">📊</span>
+                    <span>Overview</span>
+                </button>
+                <button class="nav-item" data-section="payments">
+                    <span class="nav-icon">💰</span>
+                    <span>Payments</span>
+                </button>
+                <button class="nav-item" data-section="issues">
+                    <span class="nav-icon">🔧</span>
+                    <span>Issues</span>
+                </button>
+                <button class="nav-item" data-section="notifications">
+                    <span class="nav-icon">🔔</span>
+                    <span>Notifications</span>
+                </button>
+                <button class="nav-item" data-section="residents">
+                    <span class="nav-icon">👥</span>
+                    <span>Residents</span>
+                </button>
+                <button class="nav-item" data-section="user-management">
+                    <span class="nav-icon">➕</span>
+                    <span>User Management</span>
+                </button>
+            </aside>
+
+            <main class="dashboard-content">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <h2>Dashboard Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-info">
+                                <h3 id="totalResidents">0</h3>
+                                <p>Total Residents</p>
+                            </div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-info">
+                                <h3 id="paymentsPaid">0</h3>
+                                <p>Payments Received</p>
+                            </div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon">⏳</div>
+                            <div class="stat-info">
+                                <h3 id="paymentsPending">0</h3>
+                                <p>Payments Pending</p>
+                            </div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon">🔧</div>
+                            <div class="stat-info">
+                                <h3 id="openIssues">0</h3>
+                                <p>Open Issues</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>Recent Payments</h3>
+                            <div id="recentPayments" class="list-container"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Recent Issues</h3>
+                            <div id="recentIssues" class="list-container"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payments Section -->
+                <section id="payments" class="content-section">
+                    <div class="section-header">
+                        <h2>Payment Management</h2>
+                        <button id="recordPaymentBtn" class="btn-primary">➕ Record Payment</button>
+                    </div>
+
+                    <div class="filters-bar">
+                        <input type="text" id="paymentSearch" class="input-field"
+                            placeholder="Search by flat or name...">
+                        <select id="paymentStatusFilter" class="select-field">
+                            <option value="all">All Status</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Flat No</th>
+                                    <th>Resident Name</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Payment Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Issues Section -->
+                <section id="issues" class="content-section">
+                    <div class="section-header">
+                        <h2>Issue Management</h2>
+                    </div>
+
+                    <div class="filters-bar">
+                        <input type="text" id="issueSearch" class="input-field" placeholder="Search issues...">
+                        <select id="issueStatusFilter" class="select-field">
+                            <option value="all">All Status</option>
+                            <option value="open">Open</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                        <select id="issueTypeFilter" class="select-field">
+                            <option value="all">All Types</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="complaint">Complaint</option>
+                            <option value="request">Request</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Flat No</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issuesTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Notifications Section -->
+                <section id="notifications" class="content-section">
+                    <div class="section-header">
+                        <h2>Notifications</h2>
+                        <button id="sendNotificationBtn" class="btn-primary">➕ Send Notification</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Recipients</th>
+                                    <th>Sent Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="notificationsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Residents Section -->
+                <section id="residents" class="content-section">
+                    <div class="section-header">
+                        <h2>Residents</h2>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Flat No</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Payment Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="residentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- User Management Section -->
+                <section id="user-management" class="content-section">
+                    <div class="section-header">
+                        <h2>User Management</h2>
+                        <button id="addUserBtn" class="btn-primary">➕ Add New User</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Flat No</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Resident Dashboard -->
+    <div id="residentDashboard" class="page">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <h1 class="navbar-title">🏘️ Township Management</h1>
+                <div class="navbar-actions">
+                    <span class="user-info" id="residentUserInfo">Resident</span>
+                    <button id="residentLogout" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="dashboard-container">
+            <aside class="sidebar-nav">
+                <button class="nav-item active" data-section="resident-overview">
+                    <span class="nav-icon">🏠</span>
+                    <span>My Dashboard</span>
+                </button>
+                <button class="nav-item" data-section="resident-payments">
+                    <span class="nav-icon">💰</span>
+                    <span>My Payments</span>
+                </button>
+                <button class="nav-item" data-section="resident-issues">
+                    <span class="nav-icon">🔧</span>
+                    <span>My Issues</span>
+                </button>
+                <button class="nav-item" data-section="resident-notifications">
+                    <span class="nav-icon">🔔</span>
+                    <span>Notifications</span>
+                </button>
+            </aside>
+
+            <main class="dashboard-content">
+                <!-- Resident Overview -->
+                <section id="resident-overview" class="content-section active">
+                    <h2>My Dashboard</h2>
+
+                    <div class="stats-grid">
+                        <div class="stat-card" id="residentPaymentCard">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <h3 id="residentPaymentStatus">Pending</h3>
+                                <p>Current Month Payment</p>
+                            </div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon">🔧</div>
+                            <div class="stat-info">
+                                <h3 id="residentIssueCount">0</h3>
+                                <p>My Open Issues</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔔</div>
+                            <div class="stat-info">
+                                <h3 id="residentNotificationCount">0</h3>
+                                <p>Unread Notifications</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="switchSection('resident-issues')">
+                                <span>🔧</span>
+                                <span>Raise New Issue</span>
+                            </button>
+                            <button class="action-btn" onclick="switchSection('resident-payments')">
+                                <span>💰</span>
+                                <span>View Payment History</span>
+                            </button>
+                            <button class="action-btn" onclick="switchSection('resident-notifications')">
+                                <span>🔔</span>
+                                <span>View Notifications</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Resident Payments -->
+                <section id="resident-payments" class="content-section">
+                    <h2>My Payment History</h2>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Payment Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="residentPaymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Resident Issues -->
+                <section id="resident-issues" class="content-section">
+                    <div class="section-header">
+                        <h2>My Issues</h2>
+                        <button id="raiseIssueBtn" class="btn-primary">➕ Raise Issue</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="residentIssuesTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Resident Notifications -->
+                <section id="resident-notifications" class="content-section">
+                    <h2>Notifications</h2>
+
+                    <div id="residentNotificationsList" class="notifications-list"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Record Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Record Payment</h2>
+                <button class="modal-close" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <input type="hidden" id="paymentId">
+                    <div class="form-group">
+                        <label for="paymentFlat">Flat Number *</label>
+                        <select id="paymentFlat" class="select-field" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentAmount">Amount *</label>
+                        <input type="number" id="paymentAmount" class="input-field" placeholder="Enter amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentMonth">Month *</label>
+                        <input type="month" id="paymentMonth" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentDate">Payment Date *</label>
+                        <input type="date" id="paymentDate" class="input-field" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('paymentModal')">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Issue Modal -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="issueModalTitle">Issue Details</h2>
+                <button class="modal-close" onclick="closeModal('issueModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="issueForm">
+                    <input type="hidden" id="issueId">
+                    <div class="form-group">
+                        <label for="issueType">Issue Type *</label>
+                        <select id="issueType" class="select-field" required>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="complaint">Complaint</option>
+                            <option value="request">Request</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="issueDescription">Description *</label>
+                        <textarea id="issueDescription" class="textarea-field" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group" id="issueStatusGroup">
+                        <label for="issueStatus">Status *</label>
+                        <select id="issueStatus" class="select-field" required>
+                            <option value="open">Open</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="issuePriorityGroup">
+                        <label for="issuePriority">Priority *</label>
+                        <select id="issuePriority" class="select-field" required>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="issueNotesGroup">
+                        <label for="issueNotes">Admin Notes</label>
+                        <textarea id="issueNotes" class="textarea-field" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('issueModal')">Cancel</button>
+                        <button type="submit" class="btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userModalTitle">Add New User</h2>
+                <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="form-group">
+                        <label for="userUsername">Username *</label>
+                        <input type="text" id="userUsername" class="input-field" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Password *</label>
+                        <input type="password" id="userPassword" class="input-field" placeholder="Enter password"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole">Role *</label>
+                        <select id="userRole" class="select-field" required>
+                            <option value="resident">Resident</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="userFlatGroup">
+                        <label for="userFlat">Flat Number *</label>
+                        <input type="text" id="userFlat" class="input-field" placeholder="e.g., A101" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userName">Full Name *</label>
+                        <input type="text" id="userName" class="input-field" placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email *</label>
+                        <input type="email" id="userEmail" class="input-field" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPhone">Phone *</label>
+                        <input type="tel" id="userPhone" class="input-field" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('userModal')">Cancel</button>
+                        <button type="submit" class="btn-primary">Save User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Notification Modal -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Send Notification</h2>
+                <button class="modal-close" onclick="closeModal('notificationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="notificationForm">
+                    <div class="form-group">
+                        <label for="notificationTitle">Title *</label>
+                        <input type="text" id="notificationTitle" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notificationMessage">Message *</label>
+                        <textarea id="notificationMessage" class="textarea-field" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notificationType">Type *</label>
+                        <select id="notificationType" class="select-field" required>
+                            <option value="general">General</option>
+                            <option value="payment">Payment Reminder</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="notificationRecipients">Recipients *</label>
+                        <select id="notificationRecipients" class="select-field" required>
+                            <option value="all">All Residents</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary"
+                            onclick="closeModal('notificationModal')">Cancel</button>
+                        <button type="submit" class="btn-primary">Send Notification</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
